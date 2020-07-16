@@ -439,4 +439,38 @@ public class RNBluetoothManagerModule extends ReactContextBaseJavaModule
                 break;
         }
     }
+    
+        /*
+    // Constants that indicate the current connection state
+    public static final int STATE_NONE = 0;       // we're doing nothing
+    // public static final int STATE_LISTEN = 1;     // now listening for incoming connections //feathure removed.
+    public static final int STATE_CONNECTING = 2; // now initiating an outgoing connection
+    public static final int STATE_CONNECTED = 3;  // now connected to a remote device
+*/
+    @ReactMethod
+    public void isDeviceConnected(final Promise promise) {
+
+        Boolean isConnected = true;
+
+        if (mService != null) {
+            switch (mService.getState()) {
+                case 0:
+                    isConnected = false;
+                    break;
+
+                case 2:
+                    isConnected = false;
+                    break;
+
+                case 3:
+                    isConnected = true;
+                    break;
+
+                default:
+                    isConnected = false;
+                    break;
+            }
+            promise.resolve(isConnected);
+        }
+    }
 }
