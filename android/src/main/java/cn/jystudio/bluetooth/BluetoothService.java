@@ -29,7 +29,7 @@ public class BluetoothService {
     //UUID must be this
     // Unique UUID for this application
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-
+    
     // Member fields
     private BluetoothAdapter mAdapter;
 
@@ -210,21 +210,22 @@ public class BluetoothService {
             BluetoothSocket tmp = null;
 
             // try to connect with socket inner method firstly.
-            for(int i=1;i<=3;i++) {
-                try {
-                    tmp = (BluetoothSocket) mmDevice.getClass().getMethod("createRfcommSocket", int.class).invoke(mmDevice, i);
-                } catch (Exception e) {
-                }
-                if(tmp!=null){
-                    mmSocket = tmp;
-                    break;
-                }
-            }
+            // for(int i=1;i<=3;i++) {
+            //     try {
+            //         tmp = (BluetoothSocket) mmDevice.getClass().getMethod("createRfcommSocket", int.class).invoke(mmDevice, i);
+            //     } catch (Exception e) {
+            //     }
+            //     if(tmp!=null){
+            //         mmSocket = tmp;
+            //         break;
+            //     }
+            // }
 
             // try with given uuid
             if(mmSocket == null) {
                 try {
-                    tmp = mmDevice.createRfcommSocketToServiceRecord(MY_UUID);
+                    Log.d(TAG, "masuk");
+                    tmp = mmDevice.createInsecureRfcommSocketToServiceRecord(MY_UUID);
                 } catch (IOException e) {
                     e.printStackTrace();
                     Log.e(TAG, "create() failed", e);
@@ -241,7 +242,10 @@ public class BluetoothService {
             try {
                 // This is a blocking call and will only return on a
                 // successful connection or an exception
-                mmSocket.connect();
+                if (!mmSocket.isConnected()) {
+                    mmSocket.connect();
+                }
+          
             } catch (Exception e) {
                 e.printStackTrace();
                 connectionFailed();
