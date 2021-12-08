@@ -497,5 +497,143 @@ public class RNBluetoothEscposPrinterModule extends ReactContextBaseJavaModule
             return str;
         }
     }
+    
+    @ReactMethod
+    public void openBlackMark() {
+        //设置黑标电压
+//        PrintService.pl.write(new byte[]{0x1b, 0x23, 0x23, 0x52, 0x42, 0x43, 0x56, (byte) 0xf4, 0x01});
+        //打开增强模式
+//        PrintService.pl.write(new byte[]{0x1b,0x23,0x23,0x46,0x42,0x45,0x48,0x31});
+
+        mService.write(new byte[]{0x1F, 0x1B, 0x1F, (byte) 0x80,
+                0x04, 0x05, 0x06, 0x44});
+//        System.out.println(mService.write(new byte[]{0x1d, 0x67, 0x34}));
+//        System.out.println(mService.write(new byte[]{0x1d, 0x67, 0x35}));
+
+    }
+
+    @ReactMethod
+    public void printParagraph(final ReadableArray printBuffer) {
+        try {
+            try{
+                JSONArray dataText = convertArrayToJson(printBuffer);
+
+                for (int i = 0; i < dataText.length(); i++) {
+
+                    byte[] send = (dataText.getString(i) + '\n').getBytes("GBK");
+                    mService.write(send);
+                }
+            }catch (JSONException e){
+                e.printStackTrace();
+            }
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        //PrintService.pl.printText("\n");
+        mService.write(new byte[]{0x1d, 0x0c});
+    }
+
+    private static WritableMap convertJsonToMap(JSONObject jsonObject) throws JSONException {
+        WritableMap map = new WritableNativeMap();
+
+        Iterator<String> iterator = jsonObject.keys();
+        while (iterator.hasNext()) {
+            String key = iterator.next();
+            Object value = jsonObject.get(key);
+            if (value instanceof JSONObject) {
+                map.putMap(key, convertJsonToMap((JSONObject) value));
+            } else if (value instanceof Boolean) {
+                map.putBoolean(key, (Boolean) value);
+            } else if (value instanceof Integer) {
+                map.putInt(key, (Integer) value);
+            } else if (value instanceof Double) {
+                map.putDouble(key, (Double) value);
+            } else if (value instanceof String) {
+                map.putString(key, (String) value);
+            } else {
+                map.putString(key, value.toString());
+            }
+        }
+        return map;
+    }
+
+    private static WritableArray convertJsonToArray(JSONArray jsonArray) throws JSONException {
+        WritableArray array = new WritableNativeArray();
+
+        for (int i = 0; i < jsonArray.length(); i++) {
+            Object value = jsonArray.get(i);
+            if (value instanceof JSONObject) {
+                array.pushMap(convertJsonToMap((JSONObject) value));
+            } else if (value instanceof JSONArray) {
+                array.pushArray(convertJsonToArray((JSONArray) value));
+            } else if (value instanceof Boolean) {
+                array.pushBoolean((Boolean) value);
+            } else if (value instanceof Integer) {
+                array.pushInt((Integer) value);
+            } else if (value instanceof Double) {
+                array.pushDouble((Double) value);
+            } else if (value instanceof String) {
+                array.pushString((String) value);
+            } else {
+                array.pushString(value.toString());
+            }
+        }
+        return array;
+    }
+
+    private static JSONArray convertArrayToJson(ReadableArray readableArray) throws JSONException {
+        JSONArray array = new JSONArray();
+        for (int i = 0; i < readableArray.size(); i++) {
+            switch (readableArray.getType(i)) {
+                case Null:
+                    break;
+                case Boolean:
+                    array.put(readableArray.getBoolean(i));
+                    break;
+                case Number:
+                    array.put(readableArray.getDouble(i));
+                    break;
+                case String:
+                    array.put(readableArray.getString(i));
+                    break;
+                case Map:
+                    array.put(convertMapToJson(readableArray.getMap(i)));
+                    break;
+                case Array:
+                    array.put(convertArrayToJson(readableArray.getArray(i)));
+                    break;
+            }
+        }
+        return array;
+    }
+    private static JSONObject convertMapToJson(ReadableMap readableMap) throws JSONException {
+        JSONObject object = new JSONObject();
+        ReadableMapKeySetIterator iterator = readableMap.keySetIterator();
+        while (iterator.hasNextKey()) {
+            String key = iterator.nextKey();
+            switch (readableMap.getType(key)) {
+                case Null:
+                    object.put(key, JSONObject.NULL);
+                    break;
+                case Boolean:
+                    object.put(key, readableMap.getBoolean(key));
+                    break;
+                case Number:
+                    object.put(key, readableMap.getDouble(key));
+                    break;
+                case String:
+                    object.put(key, readableMap.getString(key));
+                    break;
+                case Map:
+                    object.put(key, convertMapToJson(readableMap.getMap(key)));
+                    break;
+                case Array:
+                    object.put(key, convertArrayToJson(readableMap.getArray(key)));
+                    break;
+            }
+        }
+        return object;
+    }
 
 }
