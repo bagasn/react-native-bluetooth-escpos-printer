@@ -17,7 +17,13 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import javax.annotation.Nullable;
+
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.*;
 
@@ -514,7 +520,7 @@ public class RNBluetoothEscposPrinterModule extends ReactContextBaseJavaModule
     
     @ReactMethod
     public void closeBlackMark() {
-        PrintService.pl.write(new byte[]{0x1F, 0x1B, 0x1F, (byte) 0x80,
+        mService.write(new byte[]{0x1F, 0x1B, 0x1F, (byte) 0x80,
                 0x04, 0x05, 0x06, 0x66});
     }
 
