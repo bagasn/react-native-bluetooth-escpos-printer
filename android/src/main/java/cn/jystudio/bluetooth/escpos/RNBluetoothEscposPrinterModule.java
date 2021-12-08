@@ -511,6 +511,12 @@ public class RNBluetoothEscposPrinterModule extends ReactContextBaseJavaModule
 //        System.out.println(mService.write(new byte[]{0x1d, 0x67, 0x35}));
 
     }
+    
+    @ReactMethod
+    public void closeBlackMark() {
+        PrintService.pl.write(new byte[]{0x1F, 0x1B, 0x1F, (byte) 0x80,
+                0x04, 0x05, 0x06, 0x66});
+    }
 
     @ReactMethod
     public void printParagraph(final ReadableArray printBuffer) {
