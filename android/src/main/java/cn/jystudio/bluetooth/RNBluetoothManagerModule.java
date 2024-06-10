@@ -1,6 +1,7 @@
 package cn.jystudio.bluetooth;
 
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -10,10 +11,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.widget.Toast;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import com.facebook.react.bridge.*;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import org.json.JSONArray;
@@ -118,6 +120,7 @@ public class RNBluetoothManagerModule extends ReactContextBaseJavaModule
 
 
     @ReactMethod
+    @SuppressLint("MissingPermission")
     public void enableBluetooth(final Promise promise) {
         BluetoothAdapter adapter = this.getBluetoothAdapter();
         if(adapter == null){
@@ -131,7 +134,7 @@ public class RNBluetoothManagerModule extends ReactContextBaseJavaModule
             this.reactContext.startActivityForResult(enableIntent, REQUEST_ENABLE_BT, Bundle.EMPTY);
         } else {
             WritableArray pairedDeivce =Arguments.createArray();
-            Set<BluetoothDevice> boundDevices = adapter.getBondedDevices();
+             Set<BluetoothDevice> boundDevices = adapter.getBondedDevices();
             for (BluetoothDevice d : boundDevices) {
                 try {
                     JSONObject obj = new JSONObject();
@@ -147,6 +150,7 @@ public class RNBluetoothManagerModule extends ReactContextBaseJavaModule
     }
 
     @ReactMethod
+    @SuppressLint("MissingPermission")
     public void disableBluetooth(final Promise promise) {
         BluetoothAdapter adapter = this.getBluetoothAdapter();
         if(adapter == null){
@@ -166,6 +170,7 @@ public class RNBluetoothManagerModule extends ReactContextBaseJavaModule
     }
 
     @ReactMethod
+    @SuppressLint("MissingPermission")
     public void scanDevices(final Promise promise) {
         BluetoothAdapter adapter = this.getBluetoothAdapter();
         if(adapter == null){
@@ -260,6 +265,7 @@ public class RNBluetoothManagerModule extends ReactContextBaseJavaModule
         }
     }
 
+    @SuppressLint("MissingPermission")
     private void cancelDisCovery() {
         try {
             BluetoothAdapter adapter = this.getBluetoothAdapter();
@@ -274,6 +280,7 @@ public class RNBluetoothManagerModule extends ReactContextBaseJavaModule
 
 
     @Override
+    @SuppressLint("MissingPermission")
     public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
         BluetoothAdapter adapter = this.getBluetoothAdapter();
         Log.d(TAG, "onActivityResult " + resultCode);
@@ -360,6 +367,7 @@ public class RNBluetoothManagerModule extends ReactContextBaseJavaModule
 
     // The BroadcastReceiver that listens for discovered devices and
     // changes the title when discovery is finished
+    @SuppressLint("MissingPermission")
     private final BroadcastReceiver discoverReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
