@@ -1,9 +1,5 @@
 buildscript {
     repositories {
-        google()
-        jcenter { url "http://jcenter.bintray.com/" }
-        maven {url "http://repo.spring.io/plugins-release/"}
-        mavenCentral()
         maven {
             // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
             url "$rootDir/../node_modules/react-native/android"
@@ -11,6 +7,10 @@ buildscript {
         maven {
             url 'https://maven.google.com'
         }
+        google()
+        mavenCentral()
+        maven { url "https://repo.spring.io/plugins-release/" }
+        jcenter()
     }
 
     dependencies {
@@ -21,12 +21,12 @@ buildscript {
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 31
     buildToolsVersion "27.0.3"
 
     defaultConfig {
-        minSdkVersion 16
-        targetSdkVersion 24
+        minSdkVersion 21
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
     }
@@ -41,10 +41,6 @@ android {
 }
 
 repositories {
-    google()
-    jcenter { url "http://jcenter.bintray.com/" }
-    maven {url "http://repo.spring.io/plugins-release/"}
-    mavenCentral()
     maven {
         // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
         url "$rootDir/../node_modules/react-native/android"
@@ -52,10 +48,14 @@ repositories {
     maven {
         url 'https://maven.google.com'
     }
+    google()
+    mavenCentral()
+    maven { url "https://repo.spring.io/plugins-release/" }
+    jcenter()
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.facebook.react:react-native:+'  // From node_modules
     implementation group: 'com.android.support', name: 'support-v4', version: '27.0.0'
     implementation "com.google.zxing:core:3.3.0"
